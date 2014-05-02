@@ -24,18 +24,7 @@ function ctor(opts, read) {
     Readable.call(this, opts)
   }
 
-  Class.prototype._from = read
-  Class.prototype._read = function(size) {
-    var self = this
-
-    this._from(size, check)
-    function check(err, data) {
-      if (err) return self.emit('error', err)
-      if (data === null) return self.push(null)
-      if (self.push(data)) self._from(size, check)
-    }
-  }
-
+  Class.prototype._read = read
   return Class
 }
 

@@ -10,13 +10,12 @@ base class, with an API lifted from
 
 [![from2](https://nodei.co/npm/from2.png?mini=true)](https://nodei.co/npm/from2)
 
-### `stream = from2([opts], read)` ###
+### `stream = from2([opts], readFunction)` ###
 
 Where `opts` are the options to pass on to the `ReadableStream` constructor,
-and `read(size, next)` is called when data is requested from the stream.
-
-* `size` is the recommended amount of data (in bytes) to retrieve.
-* `next(err)` should be called when you're ready to emit more data.
+and `readFunction(size)` is called when data is requested from the stream.
+Consul the documentation of [stream.Readable](http://nodejs.org/api/stream.html#stream_class_stream_readable_1)
+for the exact rules of the `readFunction` (i.e. `this._read`).
 
 For example, here's a readable stream that emits the contents of a given
 string:
@@ -38,7 +37,7 @@ function fromString(string) {
     string = string.slice(size)
 
     // Emit "chunk" from the stream.
-    next(null, chunk)
+    this.push(chunk)
   })
 }
 
@@ -49,9 +48,9 @@ fromString('hello world').pipe(process.stdout)
 
 ### `stream = from2.obj([opts], read)` ###
 
-Shorthand for `from2({ objectMode: true }, read)`.
+Shorthand for `from2({ objectMode: true }, readFunction)`.
 
-### `createStream = from2.ctor([opts], read)` ###
+### `createStream = from2.ctor([opts], readFunction)` ###
 
 If you're creating similar streams in quick succession you can improve
 performance by generating a stream **constructor** that you can reuse instead
